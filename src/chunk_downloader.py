@@ -19,16 +19,13 @@ def log_download(chunk_name, ip_address):
 
     with open("download_log.txt", "a") as log:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
         log.write(f"[{timestamp}] RECEIVED '{chunk_name}' from {peer_name} ({ip_address})\n")
 
 def merge_chunks(base_filename, num_chunks=3, download_dir="./upload_files"):
     os.makedirs(download_dir, exist_ok=True)
     
     name, ext = os.path.splitext(base_filename)
-    
     output_filename = f"{name}_merged{ext}"
-        
     output_filepath = os.path.join(download_dir, output_filename)
     
     try:
@@ -77,7 +74,13 @@ def fetch_chunk(target_ip, chunk_name, is_secure=False, download_dir="./upload_f
             request_payload = {"requested_secured_content": chunk_name}
             tcp_client.send(json.dumps(request_payload).encode('utf-8'))
             
-            response_data = tcp_client.recv(65536) 
+            response_data = b""
+            while True:
+                packet = tcp_client.recv(65536)
+                if not packet:
+                    break
+                response_data += packet
+                
             if not response_data:
                 return False, "No data received for secure file."
                 
@@ -103,7 +106,13 @@ def fetch_chunk(target_ip, chunk_name, is_secure=False, download_dir="./upload_f
             request_payload = {"requested_content": chunk_name}
             tcp_client.send(json.dumps(request_payload).encode('utf-8'))
             
-            response_data = tcp_client.recv(65536) 
+            response_data = b""
+            while True:
+                packet = tcp_client.recv(65536)
+                if not packet:
+                    break
+                response_data += packet
+                
             if not response_data:
                 return False, "No data received from peer."
                 
@@ -130,4 +139,4 @@ def fetch_chunk(target_ip, chunk_name, is_secure=False, download_dir="./upload_f
     except Exception as e:
         return False, str(e)
     finally:
-        tcp_client.close()  
+        tcp_client.close()
