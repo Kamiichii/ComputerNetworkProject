@@ -63,7 +63,8 @@ def start_content_discovery():
                         if username not in content_dictionary[chunk]:
                             content_dictionary[chunk].append(username)
                             
-                    print(f"\n[Discovery] {username}: {', '.join(chunks)}")
+                    if __name__ == "__main__":
+                        print(f"\n[Discovery] {username}: {', '.join(chunks)}")
                     
                     with open('content_dictionary.json', 'w') as f:
                         json.dump(content_dictionary, f)
@@ -81,3 +82,12 @@ def start_content_discovery():
         pass
     finally:
         udp_socket.close()
+
+if __name__ == "__main__":
+    print("[System] Content Discovery node started in standalone mode...")
+    print("Listening for peer broadcasts on UDP port 6000. Press Ctrl+C to exit.\n")
+    
+    try:
+        start_content_discovery()
+    except KeyboardInterrupt:
+        print("\n[System] Shutting down Content Discovery node.")

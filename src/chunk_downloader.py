@@ -86,8 +86,8 @@ def fetch_chunk(target_ip, chunk_name, is_secure=False, download_dir="./upload_f
                 
             response = json.loads(response_data.decode('utf-8'))
             
-            if "encrypted_chunk" in response:
-                encrypted_bytes = base64.b64decode(response["encrypted_chunk"])
+            if "encrypted chunk" in response:
+                encrypted_bytes = base64.b64decode(response["encrypted chunk"])
                 des_key_bytes = security_utils.get_des_key_bytes(shared_secret)
                 raw_bytes = pyDes.des(des_key_bytes, pyDes.ECB, pad=None, padmode=pyDes.PAD_PKCS5).decrypt(encrypted_bytes)
                 
